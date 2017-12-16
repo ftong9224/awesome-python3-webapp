@@ -3,6 +3,8 @@
 
 __author__ = 'Ftong Tong'
 
+import asyncio, logging
+
 import aiomysql
 
 def log(sql, args=()):
@@ -14,9 +16,9 @@ async def create_pool(loop, **kw):
 	__pool = await aiomysql.create_pool(
 		host = kw.get('host', 'localhost'),
 		port = kw.get('port', 3306),
-		user = kw['root'],
-		password = kw['123456'],
-		db = kw['db'],
+		user = kw['user'],
+		password = kw['password'],
+		db = kw['database'],
 		charset = kw.get('charset', 'utf8'),
 		autocommit = kw.get('autocommit', True),
 		maxsize = kw.get('maxsize', 10),
@@ -118,7 +120,7 @@ class ModelMetaclass(type):
 					fields.append(k)
 		if not primaryKey:
 			raise StandardError('Primary key not found.')
-		for k in mapping.keys():
+		for k in mappings.keys():
 			attrs.pop(k)
 		escaped_fields = list(map(lambda f: '`%s`' % f, fields))
 		attrs['__mappings__'] = mappings
@@ -127,7 +129,7 @@ class ModelMetaclass(type):
 		attrs['__fields__'] = fields
 		attrs['__select__'] = 'select `%s`, %s from `%s`' % (primaryKey, ', '.join(escaped_fields), tableName)
 		attrs['__insert__'] = 'insert into `%s` (%s, `%s`) values (%s)' % (tableName, ', '.join(escaped_fields), primaryKey, create_args_string(len(escaped_fields)+1))
-		attrs['__update__'] = 'update `%s` set %s where `%s`=?' %(tableName, ', '.join(map(lambda f: '`%s`=?' % (mappings.get(f).name or f), fields)), primarykey)
+		attrs['__update__'] = 'update `%s` set %s where `%s`=?' %(tableName, ', '.join(map(lambda f: '`%s`=?' % (mappings.get(f).name or f), fields)), primaryKey)
 		attrs['__delete__'] = 'delete from `%s` where `%s`=?' % (tableName, primaryKey)
 		return type.__new__(cls, name, bases, attrs)
 
