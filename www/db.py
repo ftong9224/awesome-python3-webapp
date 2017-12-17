@@ -17,5 +17,5 @@ def test(loop):
 
 	yield from u.save()
 
-for x in test():
+for x in test(loop):
 	pass
