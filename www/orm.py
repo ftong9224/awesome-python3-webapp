@@ -19,7 +19,7 @@ def create_pool(loop, **kw):
 		port = kw.get('port', 3306),
 		user = kw['user'],
 		password = kw['password'],
-		db = kw['database'],
+		db = kw['db'],
 		charset = kw.get('charset', 'utf8'),
 		autocommit = kw.get('autocommit', True),
 		maxsize = kw.get('maxsize', 10),
@@ -147,8 +147,8 @@ class Model(dict, metaclass = ModelMetaclass):
 	def __getattr__(self, key):
 		try:
 			return self[key]
-		except keyError:
-			raise AttributeError("'Model' object has no attirbute '%s'" % key)
+		except KeyError:
+			raise AttributeError(r"'Model' object has no attirbute '%s'" % key)
 
 	def __setattr__(self, key, value):
 		self[key] = value
@@ -159,9 +159,9 @@ class Model(dict, metaclass = ModelMetaclass):
 	def getValueOrDefault(self, key):
 		value = getattr(self, key, None)
 		if value is None:
-			field = self.__mapping__[key]
+			field = self.__mappings__[key]
 			if field.default is not None:
-				value = field.default() if callable(field.default) else field.defaut
+				value = field.default() if callable(field.default) else field.default
 				logging.debug('using default value for %s:%s' % (key, str(value)))
 				setattr(self, key, value)
 		return value

@@ -64,7 +64,8 @@ def auth_factory(app, handler):
 			if user:
 				logging.info('set current user: %s' % user.email)
 				request.__user__ = user
-		if request.path.startswith('/manage/') and (request.__user__ is None or not request.__user__.admin):
+		if request.path.startswith('/manage/') and request.__user__ is None:
+										    ###or not request.__user__.admin):
 			return web.HTTPFound('/signin')
 		return (yield from handler(request))
 	return auth
@@ -139,7 +140,7 @@ def datetime_filter(t):
 
 @asyncio.coroutine
 def init(loop):
-	yield from orm.create_pool(loop, host = '127.0.0.1', port = 3306, user = 'www-data', password = 'www-data', database = 'awesome')
+	yield from orm.create_pool(loop = loop, **configs.db)
 	app = web.Application(loop = loop, middlewares = [
 		logger_factory, auth_factory, response_factory
 	])
@@ -147,7 +148,7 @@ def init(loop):
 	add_routes(app, 'handlers')
 	add_static(app)
 	srv = yield from loop.create_server(app.make_handler(), '0.0.0.0', 9000)
-	logging.info('server started at http://106.14.214.217.0.0.1:9000...')
+	logging.info('server started at http://106.14.214.217:9000...')
 	return srv
 
 loop =  asyncio.get_event_loop()
