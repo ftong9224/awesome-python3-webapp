@@ -1,10 +1,10 @@
-#!/usr/bin/evn python3
+#!/usr/bin/env python3
 # _*_ conding: utf-8 _*_
 
 __author__ = 'Ftong Tong'
 
 '''
-init database: awesome
+init database: awesome.
 '''
 
 import orm
