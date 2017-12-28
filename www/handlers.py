@@ -315,6 +315,13 @@ def api_delete_blog(request, *, id):
 	#return dict(id = id)
 	return blog 
 
+@post('/api/users/{id}/delete')
+def api_delete_user(request, *, id):
+	check_admin(request)
+	user = yield from User.find(id)
+	yield from user.remove()
+	return dict(id = id)
+
 @get('/users')
 def listUsers(request):
 	users = yield from User.findAll()

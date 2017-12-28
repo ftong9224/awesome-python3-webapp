@@ -55,7 +55,7 @@ def start_watch(path, callback):
 		while True:
 			time.sleep(0.5)
 	except KeyboardInterrupt:
-		obersver.stop()
+		observer.stop()
 	observer.join()
 
 if __name__ == '__main__':
